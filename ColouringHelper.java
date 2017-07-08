@@ -1,10 +1,10 @@
-/* 
+/*
 4-Colouring Program
 
 Usage: java Colouring input.png outputname.png
 
 Should 4-colour reasonably high resolution line art such that no adjacent sections of the image have the same colour.
-Input must be a PNG. 
+Input must be a PNG.
 
 Nicholas Kobald 16/04/15
 */
@@ -16,27 +16,28 @@ import java.io.File;
 import java.awt.Point;
 import java.util.*;
 
-public abstract class ColouringHelper extends ColouringBase{
-	
+public abstract class ColouringHelper extends ColouringBase {
+
 	protected int numSections; //number of sections
 	protected int [] sectionColors;	//map section colours
 	public PNGCanvas p; //canvas we're doing most of our work on
-	int [][] visited; 
-	int [][] partitions; 
-	protected int maxSectionSize; 
-	protected int [][] outlineArray; 
+	int [][] visited;
+	int [][] partitions;
+	protected int maxSectionSize;
+	protected int [][] outlineArray;
 
-	
 	protected boolean Vis(int x, int y){
 		if((x<0) || x>= WIDTH || y<0 || y >= WIDTH) return true;
 		if(visited[x][y] == 1) return true;
 		else 				   return false;
 	}
+
 	protected void setVis(int x, int y){
 		if((x<0) || x>=p.width || y<0 || y>=p.height) return;
 		visited[x][y] = 1;
 	}
-	//populate outlineArray to have -1 at all (x,y) that PNG canvas has a black cell. 
+
+	//populate outlineArray to have -1 at all (x,y) that PNG canvas has a black cell.
 	protected void fillOutLineArray(){
 		for(int i = 0; i<WIDTH;i++){
 			for(int j = 0; j<HEIGHT;j++){
@@ -44,13 +45,13 @@ public abstract class ColouringHelper extends ColouringBase{
 			}
 		}
 	}
-	
+
 	/* Make all pixels black or white. */
 	protected void convertToBinary() {
 		for(int i =0;i<p.width;i++){
 			for(int j =0;j<p.height;j++){
 				if(p.intensity(i, j) > 200) p.SetPixel(i, j, WHITE); //white
-				else 						p.SetPixel(i, j, BLACK); 
+				else 						p.SetPixel(i, j, BLACK);
 			}
 		}
 	}
@@ -62,6 +63,7 @@ public abstract class ColouringHelper extends ColouringBase{
 			}
 		}
 	}
+
 	protected void getLines(){
 		for(int i = 0; i<WIDTH; i++){
 			for(int j =0; j<HEIGHT; j++){
@@ -69,21 +71,24 @@ public abstract class ColouringHelper extends ColouringBase{
 			}
 		}
 	}
+
 	protected int findSection(int x, int y){
 		for(int i = 0; true; i++){
 			if(getPartVal(x+i, y) != -2 &&  getPartVal(x+i, y) != -1 ) return getPartVal(x+i, y);
 
 			if(getPartVal(x-i, y) != -2 &&  getPartVal(x-i, y) != -1 ) return getPartVal(x-i, y);
-				
+
 			if(getPartVal(x, y+i) != -2 &&  getPartVal(x, y+i) != -1 ) return getPartVal(x, y+i);
-				
-			if(getPartVal(x, y-i) != -2 &&  getPartVal(x, y-i) != -1 ) return getPartVal(x, y-i);  
+
+			if(getPartVal(x, y-i) != -2 &&  getPartVal(x, y-i) != -1 ) return getPartVal(x, y-i);
 		}
 	}
+
 	protected int getPartVal(int x, int y){
 		if((x<0) || x>=WIDTH || y<0 || y>=HEIGHT) return -2;
 		return partitions[x][y];
 	}
+
 	protected void PartitionImage(){
 		visited = new int[WIDTH][HEIGHT];
 		int sectionId = -1;
@@ -97,6 +102,7 @@ public abstract class ColouringHelper extends ColouringBase{
 		this.numSections = sectionId+1;
 		getLines();
 	}
+
 	protected void getPartition(int x, int y, int sectionID, int [][] visited) {
 		Queue<Point> bfsQue = new LinkedList<Point>();
 		Color target = p.GetPixel(x, y);
@@ -130,21 +136,21 @@ public abstract class ColouringHelper extends ColouringBase{
 		}
 		if(count>this.maxSectionSize)
 		this.maxSectionSize = count;
-	} 
-	
-	
+	}
+
+
 	/* Prints an error message and exits (intended for user errors) */
 	protected static void ErrorExit(String errorMessage, Object... formatArgs){
 		System.err.printf("ERROR: " + errorMessage + "\n",formatArgs);
 		System.exit(0);
 	}
-	
-	
+
+
 	/* Throws a runtime error (intended for logic errors) */
 	protected static void ErrorAbort(String errorMessage, Object... formatArgs){
 		throw new Error(String.format(errorMessage,formatArgs));
 	}
-	
+
 	protected static Color[][] load_image(String image_filename){
 		BufferedImage inputImage = null;
 		try{
@@ -161,6 +167,7 @@ public abstract class ColouringHelper extends ColouringBase{
 				imagePixels[x][y] = new Color(inputImage.getRGB(x,y));
 		return imagePixels;
 	}
+
 	protected static int[][] ColoursToIntensities(Color[][] inputPixels){
 		int width = inputPixels.length;
 		int height = inputPixels[0].length;
@@ -170,11 +177,12 @@ public abstract class ColouringHelper extends ColouringBase{
 				intensities[x][y] = (inputPixels[x][y].getRed()+inputPixels[x][y].getGreen()+inputPixels[x][y].getBlue())/3;
 		return intensities;
 	}
+
 	protected static void save_image(Color[][] imagePixels, String image_filename){
 		int width = imagePixels.length;
 		int height = imagePixels[0].length;
 		BufferedImage outputImage = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-		for (int x = 0; x < width; x++)
+		for(int x = 0; x < width; x++)
 			for(int y = 0; y < height; y++)
 				outputImage.setRGB(x,y,imagePixels[x][y].getRGB());
 		try{
@@ -184,5 +192,5 @@ public abstract class ColouringHelper extends ColouringBase{
 		}
 		System.err.printf("Wrote a %d by %d image\n",width,height);
 	}
-	
+
 }
