@@ -3,8 +3,8 @@ Java program that four colours line art PNG images.
 
 
 ## USAGE:
-    `javac Colouring.java`
-    'java Colouring <inputname>.png <outputname>.png'
+    javac Colouring.java
+    java Colouring <inputname>.png <outputname>.png
 
 Input: Reasonably high resolution LineArt (black and white image)
 
