@@ -1,8 +1,9 @@
 # FourColouringLineArt
-Java program that four colours line art PNG images. 
+Java program that four colours line art PNG images.
 
 
-USAGE: java Colouring input.png outputname.png 
+USAGE:
+    'java Colouring <inputname>.png <outputname>.png' 
 
 Input: Reasonably high resolution LineArt (black and white image)
 
